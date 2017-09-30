@@ -14,8 +14,8 @@ upc_bar_code::upc_bar_code()
 	module_set[9] = 11;
 	
 	bar_code[0] = 0x50000000;
-	bar_code[0] = 0x14000;
-	bar_code[0] = 0x5;
+	bar_code[1] = 0x14000;
+	bar_code[2] = 0x5;
 }
 
 upc_bar_code::~upc_bar_code()
