@@ -19,9 +19,10 @@ class upc_bar_code
 		long product_code;
 		short check_digit;
 		short module_set[10];
-		long bar_code[3];
+		
 	public:
-		upc_bar_code(long mfc, long pc, short pd, short cd);
+		long bar_code[3];
+		upc_bar_code(short pd, long mfc, long pc, short cd);
 		~upc_bar_code();
 		static short get_int_digit(int input, short index);
 		write();

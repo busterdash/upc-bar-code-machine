@@ -15,7 +15,7 @@ short upc_bar_code::get_int_digit(int input, short index)
 	return ((input % term10x) - ((input % term10x) % term1x)) / term1x;
 }
 
-upc_bar_code::upc_bar_code(long mfc, long pc, short pd, short cd)
+upc_bar_code::upc_bar_code(short pd, long mfc, long pc, short cd)
 {
 	module_set[0] = 13; //0001101
 	module_set[1] = 25; //0011001
@@ -60,6 +60,18 @@ upc_bar_code::~upc_bar_code()
 
 upc_bar_code::write()
 {
-	bar_code[2] = bar_code[2] | (module_set[check_digit] << 3); //Append check digit.
-	//bar_code[2] = bar_code[2] | (module_set[
+	bar_code[2] = bar_code[2] | ((~module_set[check_digit] & 127) << 3); //Append check digit.
+	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,0)] & 127) << 10);
+	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,1)] & 127) << 17);
+	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,2)] & 127) << 24);
+	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,3)] & 1) << 31);
+	bar_code[1] = bar_code[1] | ((~module_set[get_int_digit(product_code,3)] & 126) >> 1);
+	bar_code[1] = bar_code[1] | ((~module_set[get_int_digit(product_code,4)] & 127) << 6);
+	bar_code[1] = bar_code[1] | (module_set[get_int_digit(manufacturer_code,0)] << 18);
+	bar_code[1] = bar_code[1] | (module_set[get_int_digit(manufacturer_code,1)] << 25);
+	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,2)]);
+	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,3)] << 7);
+	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,4)] << 14);
+	bar_code[0] = bar_code[0] | (module_set[product_digit] << 21);
+	
 }
