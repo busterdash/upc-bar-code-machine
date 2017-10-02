@@ -1,4 +1,5 @@
 #include "upc_bar_code.hpp"
+#include "windows_bitmap.hpp"
 
 short upc_bar_code::get_int_digit(int input, short index)
 {
@@ -60,18 +61,41 @@ upc_bar_code::~upc_bar_code()
 
 upc_bar_code::write()
 {
-	bar_code[2] = bar_code[2] | ((~module_set[check_digit] & 127) << 3); //Append check digit.
-	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,0)] & 127) << 10);
-	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,1)] & 127) << 17);
-	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,2)] & 127) << 24);
-	bar_code[2] = bar_code[2] | ((~module_set[get_int_digit(product_code,3)] & 1) << 31);
-	bar_code[1] = bar_code[1] | ((~module_set[get_int_digit(product_code,3)] & 126) >> 1);
-	bar_code[1] = bar_code[1] | ((~module_set[get_int_digit(product_code,4)] & 127) << 6);
-	bar_code[1] = bar_code[1] | (module_set[get_int_digit(manufacturer_code,0)] << 18);
-	bar_code[1] = bar_code[1] | (module_set[get_int_digit(manufacturer_code,1)] << 25);
-	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,2)]);
-	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,3)] << 7);
-	bar_code[0] = bar_code[0] | (module_set[get_int_digit(manufacturer_code,4)] << 14);
-	bar_code[0] = bar_code[0] | (module_set[product_digit] << 21);
+	bar_code[2] = bar_code[2]|((~module_set[check_digit]&127)<<3);
+	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,0)]&127)<<10);
+	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,1)]&127)<<17);
+	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,2)]&127)<<24);
+	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,3)]&1)<<31);
+	bar_code[1] = bar_code[1]|((~module_set[get_int_digit(product_code,3)]&126)>>1);
+	bar_code[1] = bar_code[1]|((~module_set[get_int_digit(product_code,4)]&127)<<6);
+	bar_code[1] = bar_code[1]|(module_set[get_int_digit(manufacturer_code,0)]<<18);
+	bar_code[1] = bar_code[1]|(module_set[get_int_digit(manufacturer_code,1)]<<25);
+	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,2)]);
+	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,3)]<<7);
+	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,4)]<<14);
+	bar_code[0] = bar_code[0]|(module_set[product_digit]<<21);
 	
+	/*Note to future self: There is a problem when the manufacturer code or product code
+	is 00403. The wrong modules are being printed but it is nothing wrong with the 
+	rendering mechanisms at all. My thoughts at this is time are that it is the monster
+	just above, or the mostly-untested get_int_digit function.*/
+	
+	windows_bitmap* wb = new windows_bitmap("barcode.bmp",96,65);
+	raster_image* ri = wb->get_dib()->get_image();
+	
+	for (int y = 0; y < 64; y++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			for (int i = 0; i < 32; i++)
+			{
+				color_component comp = 255-(((bar_code[2-x]>>i)&1)*255);
+				color pix = (comp<<16)|(comp<<8)|comp;
+				ri->set_pixel(95-x*32+i, y, pix);
+			}
+		}
+	}
+	
+	wb->save();
+	delete wb;
 }

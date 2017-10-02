@@ -9,8 +9,6 @@
 #ifndef _UPC_BAR_CODE_HPP
 #define _UPC_BAR_CODE_HPP
 
-//#include "windows_bitmap.hpp"
-
 class upc_bar_code
 {
 	private:
@@ -19,7 +17,6 @@ class upc_bar_code
 		long product_code;
 		short check_digit;
 		short module_set[10];
-		
 	public:
 		long bar_code[3];
 		upc_bar_code(short pd, long mfc, long pc, short cd);
