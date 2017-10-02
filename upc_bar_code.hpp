@@ -14,11 +14,16 @@
 class upc_bar_code
 {
 	private:
+		short product_digit;
+		long manufacturer_code;
+		long product_code;
+		short check_digit;
 		short module_set[10];
 		long bar_code[3];
 	public:
-		upc_bar_code();
+		upc_bar_code(long mfc, long pc, short pd, short cd);
 		~upc_bar_code();
+		static short get_int_digit(int input, short index);
 		write();
 };
 
