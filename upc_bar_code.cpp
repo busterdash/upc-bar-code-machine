@@ -24,7 +24,7 @@ upc_bar_code::upc_bar_code(short pd, long mfc, long pc, short cd)
 	module_set[3] = 61; //0111101
 	module_set[4] = 35; //0100011
 	module_set[5] = 49; //0110001
-	module_set[6] = 47; //0101111
+	module_set[6] = 47; //01l01111
 	module_set[7] = 59; //0111011
 	module_set[8] = 55; //0110111
 	module_set[9] = 11; //0001011
@@ -75,12 +75,7 @@ upc_bar_code::write()
 	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,4)]<<14);
 	bar_code[0] = bar_code[0]|(module_set[product_digit]<<21);
 	
-	/*Note to future self: There is a problem when the manufacturer code or product code
-	is 00403. The wrong modules are being printed but it is nothing wrong with the 
-	rendering mechanisms at all. My thoughts at this is time are that it is the monster
-	just above, or the mostly-untested get_int_digit function.*/
-	
-	windows_bitmap* wb = new windows_bitmap("barcode.bmp",96,65);
+	windows_bitmap* wb = new windows_bitmap("barcode.bmp",96,64);
 	raster_image* ri = wb->get_dib()->get_image();
 	
 	for (int y = 0; y < 64; y++)
@@ -91,7 +86,7 @@ upc_bar_code::write()
 			{
 				color_component comp = 255-(((bar_code[2-x]>>i)&1)*255);
 				color pix = (comp<<16)|(comp<<8)|comp;
-				ri->set_pixel(95-x*32+i, y, pix);
+				ri->set_pixel(95-(x*32+i), y, pix);
 			}
 		}
 	}
