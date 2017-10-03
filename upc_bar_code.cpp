@@ -37,8 +37,8 @@ void upc_bar_code::render_num_char(raster_image* ri, short value, int x_offset, 
 	{
 		for (int x = 0; x < 3; x++)
 		{
-			char_cc = 255-(((char_set[value]>>(14-(y*3+x)))&1)*255);
-			char_pix = (char_cc<<16)|(char_cc<<8)|char_cc;
+			char_cc = 255-(((char_set[value]>>(14-(y*3+x)))&1)*255); 
+			char_pix = (char_cc<<16)|(char_cc<<8)|char_cc; //Combine color components to create printable color.
 			ri->set_pixel(x+x_offset, y+y_offset, char_pix);
 		}
 	}
@@ -52,7 +52,7 @@ upc_bar_code::upc_bar_code(short pd, long mfc, long pc, short cd)
 	module_set[3] = 61; //0111101
 	module_set[4] = 35; //0100011
 	module_set[5] = 49; //0110001
-	module_set[6] = 47; //01l01111
+	module_set[6] = 47; //0101111
 	module_set[7] = 59; //0111011
 	module_set[8] = 55; //0110111
 	module_set[9] = 11; //0001011
@@ -61,6 +61,7 @@ upc_bar_code::upc_bar_code(short pd, long mfc, long pc, short cd)
 	bar_code[1] = 0x14000; //Bar code middle pattern.
 	bar_code[2] = 0x5; //Bar code end pattern.
 	
+	//Validate inputs.
 	if (pd < 0 or pd > 9)
 		product_digit = 0;
 	else
@@ -100,6 +101,9 @@ upc_bar_code::write(std::string filename)
 	color_component bar_cc = 255;
 	color bar_pix = 0xffffff;
 	
+	//This builds the barcode from a character set we defined in the constructor.
+	//Right-side bar characters are inverted as stated in the format.
+	//Five and six lines down from here, we have a value that sits over an int boundary.
 	bar_code[2] = bar_code[2]|((~module_set[check_digit]&127)<<3);
 	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,0)]&127)<<10);
 	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,1)]&127)<<17);
@@ -114,23 +118,25 @@ upc_bar_code::write(std::string filename)
 	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,4)]<<14);
 	bar_code[0] = bar_code[0]|(module_set[product_digit]<<21);
 	
-	for (int y = 0; y < bc_h; y++)
+	for (int y = 0; y < bc_h; y++) //Vertical plotting.
 	{
-		for (int x = 0; x < bc_units; x++)
+		for (int x = 0; x < bc_units; x++) //Run through all elements of bar_code[].
 		{
-			for (int i = 0; i < bc_sec; i++)
+			for (int i = 0; i < bc_sec; i++) //Plot each bit from value in bar_code[i].
 			{
-				int true_x = x*bc_sec+i;
-				int plot_x = (bc_w-1+brdr)-true_x;
-				bar_cc = 255-(((bar_code[bc_units-1-x]>>i)&1)*255);
-				bar_pix = (bar_cc<<16)|(bar_cc<<8)|bar_cc;
+				int true_x = x*bc_sec+i; //The x position within the entire bar code.
+				int plot_x = (bc_w-1+brdr)-true_x; //We plot from left to right.
+				bar_cc = 255-(((bar_code[bc_units-1-x]>>i)&1)*255); //Get color component from binary data.
+				bar_pix = (bar_cc<<16)|(bar_cc<<8)|bar_cc; //Combine color components to create printable color.
 				
-				if (y < bc_h-6)
+				if (y < bc_h-6) 
 				{
+					//Most of the print work is done here.
 					ri->set_pixel(plot_x, y+brdr, bar_pix);
 				}
-				else
+				else 
 				{
+					//Generates space in bar code for human-readable values.
 					if (true_x <= 10 or true_x >= bc_w-11 or (true_x > 44 and true_x < 50))
 						ri->set_pixel(plot_x, y+brdr, bar_pix);
 				}
@@ -138,6 +144,7 @@ upc_bar_code::write(std::string filename)
 		}
 	}
 	
+	//Generate human-readable values. 
 	for (int u = 0; u < 5; u++)
 	{
 		render_num_char(ri, get_int_digit(manufacturer_code,4-u), 13+brdr+(7*u), brdr+64-5);
