@@ -16,6 +16,34 @@ short upc_bar_code::get_int_digit(int input, short index)
 	return ((input % term10x) - ((input % term10x) % term1x)) / term1x;
 }
 
+void upc_bar_code::render_num_char(raster_image* ri, short value, int x_offset, int y_offset)
+{
+	color_component char_cc = 255;
+	color char_pix = 0xffffff;
+	
+	short char_set[10];
+	char_set[0] = 0x3B6E;
+	char_set[1] = 0x2C97;
+	char_set[2] = 0x62E7;
+	char_set[3] = 0x628F;
+	char_set[4] = 0x1BC9;
+	char_set[5] = 0x79CE;
+	char_set[6] = 0x39AB;
+	char_set[7] = 0x7A52;
+	char_set[8] = 0x3AAB;
+	char_set[9] = 0x7BCA;
+	
+	for (int y = 0; y < 5; y++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			char_cc = 255-(((char_set[value]>>(14-(y*3+x)))&1)*255);
+			char_pix = (char_cc<<16)|(char_cc<<8)|char_cc;
+			ri->set_pixel(x+x_offset, y+y_offset, char_pix);
+		}
+	}
+}
+
 upc_bar_code::upc_bar_code(short pd, long mfc, long pc, short cd)
 {
 	module_set[0] = 13; //0001101
@@ -92,13 +120,33 @@ upc_bar_code::write(std::string filename)
 		{
 			for (int i = 0; i < bc_sec; i++)
 			{
+				int true_x = x*bc_sec+i;
+				int plot_x = (bc_w-1+brdr)-true_x;
 				bar_cc = 255-(((bar_code[bc_units-1-x]>>i)&1)*255);
 				bar_pix = (bar_cc<<16)|(bar_cc<<8)|bar_cc;
-				ri->set_pixel((bc_w-1+brdr)-(x*bc_sec+i), y+brdr, bar_pix);
+				
+				if (y < bc_h-6)
+				{
+					ri->set_pixel(plot_x, y+brdr, bar_pix);
+				}
+				else
+				{
+					if (true_x <= 10 or true_x >= bc_w-11 or (true_x > 44 and true_x < 50))
+						ri->set_pixel(plot_x, y+brdr, bar_pix);
+				}
 			}
 		}
 	}
 	
+	for (int u = 0; u < 5; u++)
+	{
+		render_num_char(ri, get_int_digit(manufacturer_code,4-u), 13+brdr+(7*u), brdr+64-5);
+		render_num_char(ri, get_int_digit(product_code,4-u), 53+brdr+(7*u), brdr+64-5);
+	}
+	
+	render_num_char(ri, product_digit, -4+brdr, brdr+64-5);
+	render_num_char(ri, check_digit, brdr+bc_w+2, brdr+64-5);
+
 	wb->save();
 	delete wb;
 }
