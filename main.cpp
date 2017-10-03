@@ -5,7 +5,7 @@ using namespace std;
 int main(int argument_count, char* argument_value[])
 {
 	upc_bar_code* upcbc = new upc_bar_code(0,76737,12232,2);
-	upcbc->write();
+	upcbc->write("barcode.bmp");
 	
 	//cout << upcbc->bar_code[2] << "\r\n";
 	//cout << upcbc->bar_code[1] << "\r\n";

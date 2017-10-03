@@ -9,6 +9,8 @@
 #ifndef _UPC_BAR_CODE_HPP
 #define _UPC_BAR_CODE_HPP
 
+#include <string>
+
 class upc_bar_code
 {
 	private:
@@ -22,7 +24,7 @@ class upc_bar_code
 		upc_bar_code(short pd, long mfc, long pc, short cd);
 		~upc_bar_code();
 		static short get_int_digit(int input, short index);
-		write();
+		write(std::string filename);
 };
 
 #endif

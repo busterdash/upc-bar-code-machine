@@ -59,8 +59,19 @@ upc_bar_code::~upc_bar_code()
 	
 }
 
-upc_bar_code::write()
+upc_bar_code::write(std::string filename)
 {
+	const int bc_w = 96; //Bar code width in pixels. 
+	const int bc_h = 64; //Bar code height in pixels.
+	const int bc_sec = 32; //Size of bar_code[] data item.
+	const int bc_units = 3; //Number of elements required to contain barcode.
+	const int brdr = 16; //Border size in pixels.
+	
+	windows_bitmap* wb = new windows_bitmap(filename, brdr+bc_w+brdr, brdr+bc_h+brdr);
+	raster_image* ri = wb->get_dib()->get_image();
+	color_component bar_cc = 255;
+	color bar_pix = 0xffffff;
+	
 	bar_code[2] = bar_code[2]|((~module_set[check_digit]&127)<<3);
 	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,0)]&127)<<10);
 	bar_code[2] = bar_code[2]|((~module_set[get_int_digit(product_code,1)]&127)<<17);
@@ -75,18 +86,15 @@ upc_bar_code::write()
 	bar_code[0] = bar_code[0]|(module_set[get_int_digit(manufacturer_code,4)]<<14);
 	bar_code[0] = bar_code[0]|(module_set[product_digit]<<21);
 	
-	windows_bitmap* wb = new windows_bitmap("barcode.bmp",96,64);
-	raster_image* ri = wb->get_dib()->get_image();
-	
-	for (int y = 0; y < 64; y++)
+	for (int y = 0; y < bc_h; y++)
 	{
-		for (int x = 0; x < 3; x++)
+		for (int x = 0; x < bc_units; x++)
 		{
-			for (int i = 0; i < 32; i++)
+			for (int i = 0; i < bc_sec; i++)
 			{
-				color_component comp = 255-(((bar_code[2-x]>>i)&1)*255);
-				color pix = (comp<<16)|(comp<<8)|comp;
-				ri->set_pixel(95-(x*32+i), y, pix);
+				bar_cc = 255-(((bar_code[bc_units-1-x]>>i)&1)*255);
+				bar_pix = (bar_cc<<16)|(bar_cc<<8)|bar_cc;
+				ri->set_pixel((bc_w-1+brdr)-(x*bc_sec+i), y+brdr, bar_pix);
 			}
 		}
 	}
