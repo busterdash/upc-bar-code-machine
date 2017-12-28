@@ -1,5 +1,5 @@
 #include "upc_bar_code.hpp"
-#include "windows_bitmap.hpp"
+#include "basic-bitmap-fileio/windows_bitmap.hpp"
 
 short upc_bar_code::get_int_digit(int input, short index)
 {

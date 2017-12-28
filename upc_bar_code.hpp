@@ -10,7 +10,7 @@
 #define _UPC_BAR_CODE_HPP
 
 #include <string>
-#include "raster_image.hpp"
+#include "basic-bitmap-fileio/raster_image.hpp"
 
 class upc_bar_code
 {

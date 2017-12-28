@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include "upc_bar_code.hpp"
 using namespace std;
 
