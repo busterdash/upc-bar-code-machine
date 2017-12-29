@@ -4,6 +4,10 @@
 * Currently can write scannable UPC type A barcodes to bitmap files with human-readable text.
 * Will eventually read UPC type A barcodes from windows bitmap files.
 
+## Compiling
+* For simplicity, use Orwell Dev-C++ to compile on Windows.
+* I will provide a makefile in the future.
+
 ## Submodule(s)
 
 ### Bitmap FileIO:
