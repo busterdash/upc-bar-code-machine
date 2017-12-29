@@ -6,8 +6,8 @@
 
 ## Cloning
 ```
-git clone https://github.com/busterdash/sunlight-machine
-cd sunlight-machine
+git clone https://github.com/busterdash/upc-bar-code-machine
+cd upc-bar-code-machine
 git submodule update --init
 ```
 
