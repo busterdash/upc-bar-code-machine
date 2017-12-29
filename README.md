@@ -4,6 +4,13 @@
 * Currently can write scannable UPC type A barcodes to bitmap files with human-readable text.
 * Will eventually read UPC type A barcodes from windows bitmap files.
 
+## Cloning
+```
+git clone https://github.com/busterdash/sunlight-machine
+cd sunlight-machine
+git submodule update --init
+```
+
 ## Compiling
 * For simplicity, use Orwell Dev-C++ to compile on Windows.
 * I will provide a makefile in the future.
