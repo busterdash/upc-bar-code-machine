@@ -26,7 +26,7 @@ class upc_bar_code
 	public:
 		upc_bar_code(short pd, long mfc, long pc, short cd);
 		~upc_bar_code();
-		write(std::string filename);
+		void write(std::string filename);
 };
 
 #endif

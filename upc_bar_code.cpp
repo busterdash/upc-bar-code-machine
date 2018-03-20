@@ -88,7 +88,7 @@ upc_bar_code::~upc_bar_code()
 	
 }
 
-upc_bar_code::write(std::string filename)
+void upc_bar_code::write(std::string filename)
 {
 	const int bc_w = 96; //Bar code width in pixels. 
 	const int bc_h = 64; //Bar code height in pixels.
