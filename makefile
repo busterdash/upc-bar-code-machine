@@ -1,7 +1,7 @@
-BM_DIR = basic-bitmap-fileio
+BM_DIR = bitmap-machine
 include $(BM_DIR)/make_sm_vars
 OBJECTS = main.o upc_bar_code.o $(BM_OBJECTS)
-TARGET = upc.exe
+TARGET = upc
 CPP = g++
 
 all: $(TARGET)
