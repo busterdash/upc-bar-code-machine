@@ -24,7 +24,6 @@
 #include <string>
 #include <cstdlib>
 #include "upc_bar_code.hpp"
-using namespace std;
 
 int main(int argument_count, char* argument_value[])
 {
@@ -32,24 +31,27 @@ int main(int argument_count, char* argument_value[])
 	long manufacturer_code = 0;
 	long product_code = 0;
 	short check_digit = 0;
-	string filename = "";
+	std::string filename = "";
 	
 	if (argument_count == 6)
 	{
-		product_type = atoi(argument_value[2]);
-		manufacturer_code = atoi(argument_value[3]);
-		product_code = atoi(argument_value[4]);
-		check_digit = atoi(argument_value[5]);
-		filename = string(argument_value[1]);
+		product_type = std::atoi(argument_value[2]);
+		manufacturer_code = std::atoi(argument_value[3]);
+		product_code = std::atoi(argument_value[4]);
+		check_digit = std::atoi(argument_value[5]);
+		filename = std::string(argument_value[1]);
 	}
 	else
 	{
-		cout << "Arguments: <bitmap name> <product_type> <manufacturer_code> <product_code> <check_digit>\r\n";
+		std::cout << "Arguments: <png filename> <product_type> <manufacturer_code> <product_code> <check_digit>\r\n";
 		return 0;
 	}
 	
 	upc_bar_code* upcbc = new upc_bar_code(product_type, manufacturer_code, product_code, check_digit);
-	upcbc->write(filename);
+	unsigned int error = upcbc->write(filename);
+    
+    if (error)
+        std::cout << "Could not write " << filename << '!';
 	
 	delete upcbc;
 	return 0;

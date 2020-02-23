@@ -1,6 +1,6 @@
 [Project]
-FileName=UsageExample.dev
-Name=BarCodeUsageExample
+FileName=upc_project.dev
+Name=UPC Bar Code Machine
 Type=1
 Ver=2
 ObjFiles=
@@ -19,17 +19,17 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=UsageExample.exe
+OverrideOutputName=upc_project.exe
 HostApplication=
-UseCustomMakefile=0
-CustomMakefile=
+UseCustomMakefile=1
+CustomMakefile=makefile
 CommandLine=
-Folders=basic-bitmap-fileio
+Folders=lodepng
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=3
 CompilerSettings=0000000100000000000000000
-UnitCount=11
+UnitCount=5
 
 [VersionInfo]
 Major=1
@@ -81,9 +81,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=basic-bitmap-fileio\binary_rw.cpp
+FileName=lodepng\lodepng.cpp
 CompileCpp=1
-Folder=basic-bitmap-fileio
+Folder=lodepng
 Compile=1
 Link=1
 Priority=1000
@@ -91,9 +91,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=basic-bitmap-fileio\binary_rw.hpp
+FileName=lodepng\lodepng.h
 CompileCpp=1
-Folder=basic-bitmap-fileio
+Folder=lodepng
 Compile=1
 Link=1
 Priority=1000

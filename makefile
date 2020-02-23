@@ -1,6 +1,4 @@
-BM_DIR = bitmap-machine
-include $(BM_DIR)/make_sm_vars
-OBJECTS = main.o upc_bar_code.o $(BM_OBJECTS)
+OBJECTS = main.o upc_bar_code.o lodepng/lodepng.o
 TARGET = upc
 CPP = g++
 
@@ -10,13 +8,14 @@ $(TARGET): $(OBJECTS)
 	$(CPP) -o $(TARGET) $(OBJECTS)
 
 main.o: main.cpp
-	$(CPP) -c -o main.o main.cpp
+	$(CPP) -c -o main.o main.cpp -Wall -Wextra -pedantic -ansi -O3
 
 upc_bar_code.o: upc_bar_code.cpp
-	$(CPP) -c -o upc_bar_code.o upc_bar_code.cpp
+	$(CPP) -c -o upc_bar_code.o upc_bar_code.cpp -Wall -Wextra -pedantic -ansi -O3
 
-include $(BM_DIR)/make_sm_rules
+lodepng.o: lodepng/lodepng.cpp
+	$(CPP) -c -o lodepng/lodepng.o lodepng/lodepng.cpp -Wall -Wextra -pedantic -ansi -O3
 
 .PHONY: clean
 clean:
-	rm -f *.o *.exe $(BM_DIR)/*.o
+	rm -f *.o *.exe lodepng/*.o
